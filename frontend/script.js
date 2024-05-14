@@ -3,8 +3,15 @@ document.getElementById('upload-form').onsubmit = async function(event) {
     const formData = new FormData();
     const imageInput = document.querySelector('input[name="image"]');
     const backgroundInput = document.querySelector('input[name="background"]');
+    const nameInput = document.querySelector('input[name="name"]');
+    const positionInput = document.querySelector('input[name="position"]');
+    const trikotnummerInput = document.querySelector('input[name="trikotnummer"]');
+    
     formData.append('image', imageInput.files[0]);
     formData.append('background', backgroundInput.files[0]);
+    formData.append('name', nameInput.value);
+    formData.append('position', positionInput.value);
+    formData.append('trikotnummer', trikotnummerInput.value);
 
     try {
         const response = await fetch('http://127.0.0.1:5000/upload', {
