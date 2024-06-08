@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Cutout App</title>
-    <link rel="stylesheet" href="styles.css">  <!-- Optional: CSS for styling -->
+    <title>Image Upload</title>
 </head>
 <body>
     <h1>Upload an Image to Remove Background</h1>
@@ -12,6 +11,7 @@
         <input type="file" name="image" accept="image/*" required>
         <input type="file" name="background" accept="image/*" required>
         <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="surname" placeholder="Surname" required>
         <input type="text" name="position" placeholder="Position" required>
         <input type="text" name="trikotnummer" placeholder="Trikotnummer" required>
         <button type="submit">Upload</button>
@@ -20,6 +20,35 @@
         <h2>Result:</h2>
         <img id="result-img" src="" alt="Processed Image">
     </div>
-    <script src="script.js"></script>  <!-- Link to JavaScript -->
+    <script>
+        console.log("JavaScript is running!");
+
+        document.getElementById('upload-form').onsubmit = async function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+
+            // Log all form data before submission
+            console.log("Form data before submission:");
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                document.getElementById('result-img').src = url;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+    </script>
 </body>
 </html>
