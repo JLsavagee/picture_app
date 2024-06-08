@@ -9,19 +9,26 @@ app = Flask(__name__)
 CORS(app)
 
 # Constants for font sizes (pt)
-NAME_FONT_SIZE = 40
+NAME_FONT_SIZE = 42
 SURNAME_FONT_SIZE = 50
 POSITION_FONT_SIZE = 40
 TRIKOTNUMMER_FONT_SIZE = 80
 
 # Constants for text positions (start points)
 NAME_X, NAME_Y = 75, 75
-POSITION_X, POSITION_Y = 90, 850
-TRIKOTNUMMER_X, TRIKOTNUMMER_Y = 90, 810
+POSITION_X, POSITION_Y = 75, 853
+TRIKOTNUMMER_X, TRIKOTNUMMER_Y = 0, 0
 
 # Desired dimensions for the background in pixels
 BG_WIDTH = 815
 BG_HEIGHT = 1063
+
+#Desired dimensions for cutted image
+IMG_WIDTH = 694
+IMG_HEIGHT = 945
+
+# Maximum width for the name+surname text box
+MAX_TEXT_WIDTH = 700  
 
 # Path to assets directory
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fonts')
@@ -35,6 +42,9 @@ def load_font(font_path, font_size):
     except IOError as e:
         print(f"Error loading font from {font_path}. Error: {e}")
         return ImageFont.load_default()
+
+def get_text_width(draw, text, font):
+    return draw.textbbox((0, 0), text, font=font)[2] - draw.textbbox((0, 0), text, font=font)[0]
 
 def draw_text(draw, text, font, x, y, fill=(255, 255, 255, 255)):
     draw.text((x, y), text, font=font, fill=fill)
@@ -55,9 +65,19 @@ def draw_rotated_text(image, name, surname, name_font, surname_font, x, y, angle
     
     name_width, name_height = name_bbox[2] - name_bbox[0], name_bbox[3] - name_bbox[1]
     surname_width, surname_height = surname_bbox[2] - surname_bbox[0], surname_bbox[3] - surname_bbox[1]
+    total_width = name_width + space_width + surname_width
 
-    print(f"Name bbox: {name_bbox}, Surname bbox: {surname_bbox}")
-    print(f"Name width/height: {name_width}/{name_height}, Surname width/height: {surname_width}/{surname_height}")
+    # Adjust font sizes if necessary
+    while total_width > MAX_TEXT_WIDTH and name_font.size > 10 and surname_font.size > 10:
+        name_font = ImageFont.truetype(name_font.path, name_font.size - 1)
+        surname_font = ImageFont.truetype(surname_font.path, surname_font.size - 1)
+        name_width = get_text_width(temp_draw, name, name_font)
+        surname_width = get_text_width(temp_draw, surname, surname_font)
+        total_width = name_width + space_width + surname_width
+
+    print(f"Adjusted font sizes: name_font={name_font.size}, surname_font={surname_font.size}")
+    print(f"Final name width: {name_width}, surname width: {surname_width}, total width: {total_width}")
+
 
     # Add extra padding to the text image to ensure descenders are not cut off
     padding = 25
@@ -113,8 +133,14 @@ def upload_image():
     background = background.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 
     output_img = remove(img)
-    output_img = output_img.resize(background.size, Image.LANCZOS)
-    combined = Image.alpha_composite(background, output_img)
+    output_img = output_img.resize((IMG_WIDTH, IMG_HEIGHT), Image.LANCZOS)
+    
+    # Create a new image with the same size as the background
+    combined = background.copy()
+    
+    # Paste the output_img onto the combined image at the desired position
+    output_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
+    combined.paste(output_img, (60, 60), output_img)
 
     # Update the font paths
     font_path_regular = os.path.join(ASSETS_DIR, "Roboto-Regular.ttf")
