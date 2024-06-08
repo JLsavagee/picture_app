@@ -16,7 +16,7 @@ TRIKOTNUMMER_FONT_SIZE = 80
 
 # Constants for text positions (start points)
 NAME_X, NAME_Y = 75, 75
-POSITION_X, POSITION_Y = 570, 850
+POSITION_X, POSITION_Y = 90, 850
 TRIKOTNUMMER_X, TRIKOTNUMMER_Y = 90, 810
 
 # Desired dimensions for the background in pixels
