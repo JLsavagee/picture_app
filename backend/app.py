@@ -58,9 +58,6 @@ def draw_rotated_text(image, name, surname, name_font, surname_font, x, y, angle
         print("Either name or surname is empty.")
         return
     
-    # Define the space between name and surname
-    space_width = name_font.getbbox(' ')[2] - name_font.getbbox(' ')[0]
-
     # Create a temporary image to calculate the size of the text
     temp_image = Image.new('RGBA', (1, 1), (255, 255, 255, 0))
     temp_draw = ImageDraw.Draw(temp_image)
@@ -69,36 +66,31 @@ def draw_rotated_text(image, name, surname, name_font, surname_font, x, y, angle
     
     name_width, name_height = name_bbox[2] - name_bbox[0], name_bbox[3] - name_bbox[1]
     surname_width, surname_height = surname_bbox[2] - surname_bbox[0], surname_bbox[3] - surname_bbox[1]
+    space_width = temp_draw.textbbox((0, 0), ' ', font=name_font)[2] - temp_draw.textbbox((0, 0), ' ', font=name_font)[0]
+
+    print(f"Name bbox: {name_bbox}, Surname bbox: {surname_bbox}")
+    print(f"Name width/height: {name_width}/{name_height}, Surname width/height: {surname_width}/{surname_height}")
+
+    # Determine the total width and height needed for the combined text
     total_width = name_width + space_width + surname_width
-
-    # Adjust font sizes if necessary
-    while total_width > MAX_TEXT_WIDTH and name_font.size > 10 and surname_font.size > 10:
-        name_font = ImageFont.truetype(name_font.path, name_font.size - 1)
-        surname_font = ImageFont.truetype(surname_font.path, surname_font.size - 1)
-        name_width = get_text_width(temp_draw, name, name_font)
-        surname_width = get_text_width(temp_draw, surname, surname_font)
-        total_width = name_width + space_width + surname_width
-
-    print(f"Adjusted font sizes: name_font={name_font.size}, surname_font={surname_font.size}")
-    print(f"Final name width: {name_width}, surname width: {surname_width}, total width: {total_width}")
-
-
-    # Add extra padding to the text image to ensure descenders are not cut off
-    padding = 25
-    padded_width = name_width + space_width + surname_width + padding * 2
-    padded_height = max(name_height, surname_height) + padding * 2
+    max_height = max(name_height, surname_height)
 
     # Create a new image with enough space to rotate the text
+    padded_width = total_width + 50
+    padded_height = max_height + 50
     text_image = Image.new('RGBA', (padded_width, padded_height), (255, 255, 255, 0))
     draw = ImageDraw.Draw(text_image)
 
-    # Adjust the y position to align text to the bottom
-    bottom_y = padding + padded_height - max(name_height, surname_height)
+    # Calculate y positions to align text to the bottom
+    bottom_y = padded_height - 25
 
-    # Draw the name
-    draw.text((padding, bottom_y - name_height), name, font=name_font, fill=fill)
-    # Draw the surname next to the name with a space in between
-    draw.text((padding + name_width + space_width, bottom_y - surname_height), surname, font=surname_font, fill=fill)
+    # Draw the name aligned to the bottom
+    name_y = bottom_y - name_height
+    draw.text((25, name_y), name, font=name_font, fill=fill)
+    
+    # Draw the surname next to the name with a space in between, aligned to the bottom
+    surname_y = bottom_y - surname_height
+    draw.text((25 + name_width + space_width, surname_y), surname, font=surname_font, fill=fill)
 
     # Rotate the text image
     rotated_text_image = text_image.rotate(angle, expand=True)
@@ -113,7 +105,7 @@ def draw_rotated_text(image, name, surname, name_font, surname_font, x, y, angle
     # Debug output
     print(f"Draw rotated text at ({new_x}, {new_y}) with size {rotated_text_image.size}")
 
-# Example usage
+
 @app.route('/upload', methods=['POST'])
 def upload_image():
     if 'image' not in request.files or 'background' not in request.files:
