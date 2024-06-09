@@ -11,12 +11,12 @@ CORS(app)
 # Constants for font sizes (pt)
 NAME_FONT_SIZE = 42
 SURNAME_FONT_SIZE = 50
-POSITION_FONT_SIZE = 40
+POSITION_FONT_SIZE = 42
 TRIKOTNUMMER_FONT_SIZE = 80
 
 # Constants for text positions (start points)
 NAME_X, NAME_Y = 75, 75
-POSITION_X, POSITION_Y = 75, 853
+POSITION_X, POSITION_Y = 75, 855
 TRIKOTNUMMER_X, TRIKOTNUMMER_Y = 0, 0
 
 # Desired dimensions for the background in pixels
@@ -32,6 +32,10 @@ MAX_TEXT_WIDTH = 700
 
 # Path to assets directory
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fonts')
+
+#fixed layer imports
+FIXED_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'Position bubble.png')
+CAMP_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'WLS_Logo.png')
 
 def load_font(font_path, font_size):
     try:
@@ -150,6 +154,20 @@ def upload_image():
     surname_font = load_font(font_path_regular, SURNAME_FONT_SIZE)
     position_font = load_font(font_path_regular, POSITION_FONT_SIZE)
     trikotnummer_font = load_font(font_path_bold, TRIKOTNUMMER_FONT_SIZE)
+
+    # Load the position bubble overlay image
+    overlay_img = Image.open(FIXED_PNG_PATH).convert("RGBA")
+    overlay_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
+
+    # Paste the overlay image onto the combined image
+    combined.paste(overlay_img, (60, 824), overlay_img)
+
+    # Load the camp logo overlay image
+    camp_logo_img = Image.open(CAMP_LOGO_PNG_PATH).convert("RGBA")
+    camp_logo_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
+
+    # Paste the camp logo image onto the combined image
+    combined.paste(camp_logo_img, (536, 945), camp_logo_img)
 
     # Draw rotated text with background color
     draw_rotated_text(combined, name, surname, name_font, surname_font, NAME_X, NAME_Y, -90, fill=(255, 255, 255, 255))
