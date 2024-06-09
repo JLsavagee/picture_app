@@ -12,7 +12,13 @@
         <input type="file" name="background" accept="image/*" required>
         <input type="text" name="name" placeholder="Name" required>
         <input type="text" name="surname" placeholder="Surname" required>
-        <input type="text" name="position" placeholder="Position" required>
+        <select name="position" required>
+            <option value="" disabled selected>Position</option>
+            <option value="Mittelfeld">Mittelfeld</option>
+            <option value="Abwehr">Abwehr</option>
+            <option value="Sturm">Sturm</option>
+            <option value="Torwart">Torwart</option>
+        </select>
         <button type="submit">Upload</button>
     </form>
     <div id="result">
