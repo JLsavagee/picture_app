@@ -1,7 +1,7 @@
 from flask import Flask, request, send_file
 from flask_cors import CORS
 from rembg import remove
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 import io
 import os
 
@@ -24,8 +24,8 @@ BG_WIDTH = 815
 BG_HEIGHT = 1063
 
 #Desired dimensions for cutted image
-IMG_WIDTH = 694
-IMG_HEIGHT = 945
+IMG_WIDTH = 692
+IMG_HEIGHT = 940
 
 # Maximum width for the name+surname text box
 MAX_TEXT_WIDTH = 700  
@@ -129,14 +129,21 @@ def upload_image():
     background = background.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 
     output_img = remove(img)
-    output_img = output_img.resize((IMG_WIDTH, IMG_HEIGHT), Image.LANCZOS)
+ # Crop the output image to the desired dimensions while maintaining aspect ratio
+    output_img = ImageOps.fit(output_img, (IMG_WIDTH, IMG_HEIGHT), method=Image.LANCZOS)
+
+    # Add a border around the image
+    border_size = 2  # Adjust the border size as needed
+    border_color = 'black'  # Adjust the border color as needed
+    output_img_with_border = ImageOps.expand(output_img, border=border_size, fill=border_color)
+
     
     # Create a new image with the same size as the background
     combined = background.copy()
     
     # Paste the output_img onto the combined image at the desired position
-    output_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
-    combined.paste(output_img, (60, 60), output_img)
+    output_img_with_border.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
+    combined.paste(output_img_with_border, (60, 60), output_img_with_border)
 
     # Update the font paths
     font_path_regular = os.path.join(ASSETS_DIR, "Roboto-Regular.ttf")
