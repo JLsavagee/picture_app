@@ -9,14 +9,14 @@ app = Flask(__name__)
 CORS(app)
 
 # Constants for font sizes (pt)
-NAME_FONT_SIZE = 42
-SURNAME_FONT_SIZE = 60
+NAME_FONT_SIZE = 47
+SURNAME_FONT_SIZE = 57
 POSITION_FONT_SIZE = 42
 TRIKOTNUMMER_FONT_SIZE = 80
 
 # Constants for text positions (start points)
-NAME_X, NAME_Y = 75, 75
-POSITION_X, POSITION_Y = 75, 855
+NAME_X, NAME_Y = 80, 75
+POSITION_X, POSITION_Y = 80, 858
 TRIKOTNUMMER_X, TRIKOTNUMMER_Y = 0, 0
 
 # Desired dimensions for the background in pixels
@@ -34,7 +34,7 @@ MAX_TEXT_WIDTH = 700
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fonts')
 
 #fixed layer imports
-FIXED_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'Positionsfeld.png')
+FIXED_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'Ellipse 1.png')
 CAMP_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'WLS_Logo.png')
 
 def load_font(font_path, font_size):
@@ -159,7 +159,7 @@ def upload_image():
     overlay_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 
     # Paste the overlay image onto the combined image
-    combined.paste(overlay_img, (60, 824), overlay_img)
+    combined.paste(overlay_img, (62, 830), overlay_img)
 
     # Load the camp logo overlay image
     camp_logo_img = Image.open(CAMP_LOGO_PNG_PATH).convert("RGBA")
