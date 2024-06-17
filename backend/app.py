@@ -146,13 +146,13 @@ def upload_image():
     combined.paste(output_img_with_border, (60, 60), output_img_with_border)
 
     # Update the font paths
-    font_path_regular = os.path.join(ASSETS_DIR, "Roboto-Regular.ttf")
-    font_path_bold = os.path.join(ASSETS_DIR, "Roboto-Bold.ttf")
+    font_path_regular = os.path.join(ASSETS_DIR, "Impact.ttf")
+    #font_path_bold = os.path.join(ASSETS_DIR, "Roboto-Bold.ttf")
 
     name_font = load_font(font_path_regular, NAME_FONT_SIZE)
     surname_font = load_font(font_path_regular, SURNAME_FONT_SIZE)
     position_font = load_font(font_path_regular, POSITION_FONT_SIZE)
-    trikotnummer_font = load_font(font_path_bold, TRIKOTNUMMER_FONT_SIZE)
+    trikotnummer_font = load_font(font_path_regular, TRIKOTNUMMER_FONT_SIZE)
 
     # Load the position bubble overlay image
     overlay_img = Image.open(FIXED_PNG_PATH).convert("RGBA")
