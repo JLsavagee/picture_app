@@ -73,6 +73,15 @@ def draw_rotated_text(image, name, surname, name_font, surname_font, x, y, angle
 
     # Determine the total width and height needed for the combined text
     total_width = name_width + space_width + surname_width
+
+        # Adjust font sizes if necessary
+    while total_width > MAX_TEXT_WIDTH and name_font.size > 10 and surname_font.size > 10:
+        name_font = ImageFont.truetype(name_font.path, name_font.size - 1)
+        surname_font = ImageFont.truetype(surname_font.path, surname_font.size - 1)
+        name_width = get_text_width(temp_draw, name, name_font)
+        surname_width = get_text_width(temp_draw, surname, surname_font)
+        total_width = name_width + space_width + surname_width
+        
     max_height = max(name_height, surname_height)
 
     # Create a new image with enough space to rotate the text
