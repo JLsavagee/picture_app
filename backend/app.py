@@ -9,8 +9,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Constants for font sizes (pt)
-NAME_FONT_SIZE = 47
-SURNAME_FONT_SIZE = 57
+NAME_FONT_SIZE = 55
+SURNAME_FONT_SIZE = 80
 POSITION_FONT_SIZE = 42
 TRIKOTNUMMER_FONT_SIZE = 80
 
@@ -24,7 +24,7 @@ BG_WIDTH = 815
 BG_HEIGHT = 1063
 
 #Desired dimensions for cutted image
-IMG_WIDTH = 692
+IMG_WIDTH = 350
 IMG_HEIGHT = 940
 
 # Maximum width for the name+surname text box
@@ -81,7 +81,7 @@ def draw_rotated_text(image, name, surname, name_font, surname_font, x, y, angle
         name_width = get_text_width(temp_draw, name, name_font)
         surname_width = get_text_width(temp_draw, surname, surname_font)
         total_width = name_width + space_width + surname_width
-        
+
     max_height = max(name_height, surname_height)
 
     # Create a new image with enough space to rotate the text
@@ -144,15 +144,15 @@ def upload_image():
     # Add a border around the image
     border_size = 2  # Adjust the border size as needed
     border_color = 'black'  # Adjust the border color as needed
-    output_img_with_border = ImageOps.expand(output_img, border=border_size, fill=border_color)
+    #output_img_with_border = ImageOps.expand(output_img, border=border_size, fill=border_color)
 
     
     # Create a new image with the same size as the background
     combined = background.copy()
     
     # Paste the output_img onto the combined image at the desired position
-    output_img_with_border.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
-    combined.paste(output_img_with_border, (60, 60), output_img_with_border)
+    output_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
+    combined.paste(output_img, (200, 62), output_img)
 
     # Update the font paths
     font_path_regular = os.path.join(ASSETS_DIR, "Impact.ttf")
@@ -168,14 +168,14 @@ def upload_image():
     overlay_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 
     # Paste the overlay image onto the combined image
-    combined.paste(overlay_img, (62, 830), overlay_img)
+    combined.paste(overlay_img, (60, 830), overlay_img)
 
     # Load the camp logo overlay image
     camp_logo_img = Image.open(CAMP_LOGO_PNG_PATH).convert("RGBA")
     camp_logo_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 
     # Paste the camp logo image onto the combined image
-    combined.paste(camp_logo_img, (536, 945), camp_logo_img)
+    combined.paste(camp_logo_img, (538, 942), camp_logo_img)
 
     # Draw rotated text with background color
     draw_rotated_text(combined, name, surname, name_font, surname_font, NAME_X, NAME_Y, -90, fill=(255, 255, 255, 255))
@@ -191,7 +191,7 @@ def upload_image():
     output_dir = os.path.join(os.path.dirname(__file__), 'output')
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, f"{name}_{surname}.pdf")
-    combined.save(pdf_path, format='PDF')
+    combined.save(pdf_path, format='PDF', resolution=300)
 
     return send_file(output, mimetype='image/png')
 
