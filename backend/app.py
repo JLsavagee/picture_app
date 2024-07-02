@@ -23,10 +23,6 @@ TRIKOTNUMMER_X, TRIKOTNUMMER_Y = 0, 0
 BG_WIDTH = 815
 BG_HEIGHT = 1063
 
-#Desired dimensions for cutted image
-IMG_WIDTH = 350
-IMG_HEIGHT = 940
-
 # Maximum width for the name+surname text box
 MAX_TEXT_WIDTH = 700  
 
@@ -126,6 +122,9 @@ def upload_image():
     surname = request.form.get('surname', '')
     position = request.form.get('position', '')
     trikotnummer = request.form.get('trikotnummer', '')
+    width_correction = request.form.get('dimension', '')
+
+    width_correction = int(width_correction)
 
      # Debug: Print retrieved form values
     print(f"Received name: '{name}', surname: '{surname}', position: '{position}', trikotnummer: '{trikotnummer}'")
@@ -138,7 +137,11 @@ def upload_image():
     background = background.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 
     output_img = remove(img)
- # Crop the output image to the desired dimensions while maintaining aspect ratio
+
+    #Crop the output image to the desired dimensions while maintaining aspect ratio
+    #Desired dimensions for cutted image
+    IMG_WIDTH = 692 + width_correction
+    IMG_HEIGHT = 940 
     output_img = ImageOps.fit(output_img, (IMG_WIDTH, IMG_HEIGHT), method=Image.LANCZOS)
 
     # Add a border around the image
@@ -152,7 +155,7 @@ def upload_image():
     
     # Paste the output_img onto the combined image at the desired position
     output_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
-    combined.paste(output_img, (200, 62), output_img)
+    combined.paste(output_img, (100, 62), output_img)
 
     # Update the font paths
     font_path_regular = os.path.join(ASSETS_DIR, "Impact.ttf")
