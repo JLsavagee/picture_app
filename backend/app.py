@@ -30,8 +30,17 @@ MAX_TEXT_WIDTH = 700
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fonts')
 
 #fixed layer imports
-FIXED_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'Ellipse 1.png')
+FIXED_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'Positionsfeld-Grün.png')
 CAMP_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'WLS_Logo.png')
+SPONSOR_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'DominosLogo.png')
+
+backside = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'dominos_backside.png')
+
+#transforming backside
+backside_path = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'assets', 'fixed_layers', 'backside_pdf')
+backside = Image.open(backside).convert("RGBA")
+backside = backside.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
+backside.save(backside_path, format='PDF', resolution=300)
 
 def load_font(font_path, font_size):
     try:
@@ -179,6 +188,13 @@ def upload_image():
 
     # Paste the camp logo image onto the combined image
     combined.paste(camp_logo_img, (538, 942), camp_logo_img)
+
+    # Load the camp logo overlay image
+    sponsor_logo_img = Image.open(SPONSOR_LOGO_PNG_PATH).convert("RGBA")
+    sponsor_logo_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
+
+    # Paste the camp logo image onto the combined image
+    combined.paste(sponsor_logo_img, (490, 75), sponsor_logo_img)
 
     # Draw rotated text with background color
     draw_rotated_text(combined, name, surname, name_font, surname_font, NAME_X, NAME_Y, -90, fill=(255, 255, 255, 255))
