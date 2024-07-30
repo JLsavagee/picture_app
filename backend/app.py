@@ -2,6 +2,7 @@ from flask import Flask, request, send_file
 from flask_cors import CORS
 from rembg import remove
 from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PyPDF2 import PdfWriter, PdfReader
 import io
 import os
 
@@ -41,6 +42,23 @@ backside_path = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'asset
 backside = Image.open(backside).convert("RGBA")
 backside = backside.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 backside.save(backside_path, format='PDF', resolution=300)
+
+def merge_pdfs(pdf1_path, pdf2_path, output_pdf_path):
+    reader1 = PdfReader(pdf1_path)
+    reader2 = PdfReader(pdf2_path)
+    writer = PdfWriter()
+
+    # Add all pages from the first PDF
+    for page in reader1.pages:
+        writer.add_page(page)
+
+    # Add all pages from the second PDF
+    for page in reader2.pages:
+        writer.add_page(page)
+
+    # Save the combined PDF
+    with open(output_pdf_path, 'wb') as f:
+        writer.write(f)
 
 def load_font(font_path, font_size):
     try:
@@ -211,6 +229,9 @@ def upload_image():
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, f"{name}_{surname}.pdf")
     combined.save(pdf_path, format='PDF', resolution=300)
+
+    # Merge the created PDFs
+    merge_pdfs(pdf_path, backside_path, pdf_path)
 
     return send_file(output, mimetype='image/png')
 
