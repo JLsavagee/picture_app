@@ -20,6 +20,7 @@ NAME_X, NAME_Y = 80, 75
 POSITION_X, POSITION_Y = 80, 858
 TRIKOTNUMMER_X, TRIKOTNUMMER_Y = 0, 0
 
+
 # Desired dimensions for the background in pixels
 BG_WIDTH = 815
 BG_HEIGHT = 1063
@@ -149,11 +150,10 @@ def upload_image():
     surname = request.form.get('surname', '')
     position = request.form.get('position', '')
     trikotnummer = request.form.get('trikotnummer', '')
-    width_correction = request.form.get('dimension', '')
+    zoom_factor = request.form.get('dimension', '')
 
-    width_correction = int(width_correction)
-
-     # Debug: Print retrieved form values
+    zoom_factor = float(zoom_factor)
+    # Debug: Print retrieved form values
     print(f"Received name: '{name}', surname: '{surname}', position: '{position}', trikotnummer: '{trikotnummer}'")
     print(f"Form keys: {request.form.keys()}")
 
@@ -167,22 +167,24 @@ def upload_image():
 
     #Crop the output image to the desired dimensions while maintaining aspect ratio
     #Desired dimensions for cutted image
-    IMG_WIDTH = 692 + width_correction
-    IMG_HEIGHT = 940 
-    output_img = ImageOps.fit(output_img, (IMG_WIDTH, IMG_HEIGHT), method=Image.LANCZOS)
+    IMG_WIDTH = int(output_img.width / zoom_factor)
+    IMG_HEIGHT = int(output_img.height / zoom_factor)
 
-    # Add a border around the image
-    border_size = 2  # Adjust the border size as needed
-    border_color = 'black'  # Adjust the border color as needed
-    #output_img_with_border = ImageOps.expand(output_img, border=border_size, fill=border_color)
+    # Calculate position to paste output_img so it is centered on the background
+    IMG_POSITION_X = (BG_WIDTH - IMG_WIDTH) // 2
+    IMG_POSITION_Y = (BG_HEIGHT - IMG_HEIGHT) // 2
 
-    
+    IMG_POSITION_Y = IMG_POSITION_Y - 200
+    IMG_POSITION_X = IMG_POSITION_X  + 0
+
+    # Center crop the zoomed image to the desired dimensions
+    output_img = ImageOps.fit(output_img, (IMG_WIDTH, IMG_HEIGHT), method=Image.LANCZOS, centering=(0.5, 0.5))
+
     # Create a new image with the same size as the background
     combined = background.copy()
-    
+
     # Paste the output_img onto the combined image at the desired position
-    output_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
-    combined.paste(output_img, (100, 62), output_img)
+    combined.paste(output_img, (IMG_POSITION_X, IMG_POSITION_Y), output_img)
 
     # Update the font paths
     font_path_regular = os.path.join(ASSETS_DIR, "Impact.ttf")
