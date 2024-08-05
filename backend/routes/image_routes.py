@@ -1,5 +1,5 @@
 from flask import Blueprint, request, send_file
-from backend.services.image_service import process_image
+from services.image_service import process_image
 
 image_blueprint = Blueprint('image', __name__)
 
@@ -16,7 +16,7 @@ def upload_image():
     trikotnummer = request.form.get('trikotnummer', '')
     zoom_factor = request.form.get('dimension', '')
 
-    result = process_image(image_file, background_file, name, surname, position, trikotnummer, zoom_factor)
+    result = process_image(image_file, background_file, name, surname, position, trikotnummer)
 
     if 'error' in result:
         return result, 400

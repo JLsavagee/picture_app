@@ -2,7 +2,7 @@ import io
 import os
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from rembg import remove
-from backend.utils.helpers import load_font, draw_rotated_text, draw_text, merge_pdfs
+from utils.helpers import load_font, draw_rotated_text, draw_text, merge_pdfs
 
 # Constants
 NAME_FONT_SIZE = 55
@@ -18,6 +18,9 @@ BG_WIDTH = 815
 BG_HEIGHT = 1063
 MAX_TEXT_WIDTH = 700
 
+BORDER_SIZE = 61
+PADDING = 25
+
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'assets', 'fonts')
 
 FIXED_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'assets', 'fixed_layers', 'Positionsfeld-Grün.png')
@@ -32,8 +35,11 @@ backside_img = Image.open(backside).convert("RGBA")
 backside_img = backside_img.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 backside_img.save(backside_path, format='PDF', resolution=300)
 
-def process_image(image_file, background_file, name, surname, position, trikotnummer, zoom_factor):
-    zoom_factor = float(zoom_factor)
+def get_bounding_box(img):
+    bbox = img.getbbox()
+    return bbox
+
+def process_image(image_file, background_file, name, surname, position, trikotnummer):
     img = Image.open(image_file.stream).convert("RGBA")
     background = Image.open(background_file.stream).convert("RGBA")
 
@@ -41,18 +47,35 @@ def process_image(image_file, background_file, name, surname, position, trikotnu
 
     output_img = remove(img)
 
-    IMG_WIDTH = int(output_img.width / zoom_factor)
-    IMG_HEIGHT = int(output_img.height / zoom_factor)
+    # Get the bounding box of the non-transparent pixels
+    bbox = get_bounding_box(output_img)
+    if bbox:
+        non_transparent_region = output_img.crop(bbox)
+    else:
+        non_transparent_region = output_img
 
-    IMG_POSITION_X = (BG_WIDTH - IMG_WIDTH) // 2
-    IMG_POSITION_Y = (BG_HEIGHT - IMG_HEIGHT) // 2
+    # Calculate the maximum dimensions for the image to fit within the padding
+    max_width = BG_WIDTH - 2 * PADDING
+    max_height = BG_HEIGHT - BORDER_SIZE - PADDING  # Only top padding is applied
 
-    IMG_POSITION_Y -= 200
+    # Calculate the scaling factor to fit the image within the maximum dimensions
+    scale_factor = min(max_width / non_transparent_region.width, max_height / non_transparent_region.height)
 
-    output_img = ImageOps.fit(output_img, (IMG_WIDTH, IMG_HEIGHT), method=Image.LANCZOS, centering=(0.5, 0.5))
+    # Resize the image accordingly
+    new_width = int(non_transparent_region.width * scale_factor)
+    new_height = int(non_transparent_region.height * scale_factor)
+    non_transparent_region = non_transparent_region.resize((new_width, new_height), Image.LANCZOS)
+
+    # Calculate the position to ensure it has 50px distance from the left, right, and top edges, and sits on the bottom border
+    IMG_POSITION_X = PADDING
+    IMG_POSITION_Y = BG_HEIGHT - new_height - BORDER_SIZE
 
     combined = background.copy()
-    combined.paste(output_img, (IMG_POSITION_X, IMG_POSITION_Y), output_img)
+    combined.paste(non_transparent_region, (IMG_POSITION_X, IMG_POSITION_Y), non_transparent_region)
+    # Draw a bounding box around the non-transparent region
+    draw = ImageDraw.Draw(combined)
+    bbox_outline = [IMG_POSITION_X, IMG_POSITION_Y, IMG_POSITION_X + new_width, IMG_POSITION_Y + new_height]
+    draw.rectangle(bbox_outline, outline="red", width=5)
 
     font_path_regular = os.path.join(ASSETS_DIR, "Impact.ttf")
     
