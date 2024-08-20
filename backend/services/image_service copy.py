@@ -56,35 +56,49 @@ def process_image(image_file, background_file, name, surname, position, trikotnu
     bbox_height = bbox[3] - bbox[1]
     bbox_x1 = (BG_WIDTH - bbox_width) // 2
     bbox_y1 = (BG_HEIGHT - bbox_height) // 2
+    bbox_x2 = bbox_x1 + bbox_width
+    bbox_y2 = bbox_y1 + bbox_height
+    bbox = [bbox_x1, bbox_y1, bbox_x2, bbox_y2]
 
-    print("Centered Box Size: ", bbox_x1, bbox_y1, bbox_width, bbox_height)
+    print("Centered Box Size: ", bbox)
 
     # Extract the non-transparent region
-    non_transparent_region = output_img.crop(bbox)
+    non_transparent_region = output_img.crop(output_img.getbbox())
 
-    # Resize the non-transparent region to fit within the padding
+    # Calculate the dimensions of the non-transparent region
+    region_width = bbox[2] - bbox[0]
+    region_height = bbox[3] - bbox[1]
+
+    # Calculate the maximum dimensions for the image to fit within the padding
     max_width = BG_WIDTH - 2 * PADDING
-    max_height = BG_HEIGHT - BORDER_SIZE - PADDING
+    max_height = BG_HEIGHT - BORDER_SIZE - PADDING  # Only top padding is applied
 
-    scale_factor = min(max_width / bbox_width, max_height / bbox_height)
+    # Calculate the scaling factor to fit the image within the maximum dimensions
+    scale_factor = min(max_width / region_width, max_height / region_height)
 
-    new_width = int(bbox_width * scale_factor)
-    new_height = int(bbox_height * scale_factor)
-    non_transparent_region = non_transparent_region.resize((new_width, new_height), Image.LANCZOS)
+    # Resize the non-transparent region accordingly
+    new_width = int(region_width * scale_factor)
+    new_height = int(region_height * scale_factor)
+    # non_transparent_region = non_transparent_region.resize((new_width, new_height), Image.LANCZOS)
 
-    # Create a new blank image with the same size as the background
-    centered_image = Image.new("RGBA", (BG_WIDTH, BG_HEIGHT), (0, 0, 0, 0))
+    # Calculate the centered position of the non-transparent region within the bounding box
+    centered_region_x = (bbox_width - new_width) // 2
+    centered_region_y = (bbox_height - new_height) // 2
 
-    # Calculate the centered position of the non-transparent region within the new image
-    centered_region_x = (BG_WIDTH - new_width) // 2
-    centered_region_y = (BG_HEIGHT - new_height) // 2
+    # Create a new blank image with the same size as the bounding box
+    centered_image = Image.new("RGBA", (bbox_width, bbox_height), (0, 0, 0, 0))
 
     # Paste the non-transparent region onto the centered image
     centered_image.paste(non_transparent_region, (centered_region_x, centered_region_y), non_transparent_region)
 
     # Combine the centered image onto the background
     combined = background.copy()
-    combined.paste(centered_image, (0, 0), centered_image)
+    combined.paste(centered_image, (bbox_x1, bbox_y1), centered_image)
+
+    # Draw a bounding box around the non-transparent region
+    draw = ImageDraw.Draw(combined)
+    bbox_outline = [bbox_x1, bbox_y1, bbox_x1 + bbox_width, bbox_y1 + bbox_height]
+    draw.rectangle(bbox_outline, outline="red", width=5)
 
     font_path_regular = os.path.join(ASSETS_DIR, "Impact.ttf")
     
