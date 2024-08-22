@@ -56,14 +56,51 @@ def process_image(image_file, background_file, name, surname, position, trikotnu
     combined = background
     output_dir = os.path.join(os.path.dirname(__file__), '..', 'output')
 
-    pdf_path_img = os.path.join(output_dir, f"{name}_{surname}.png")
+    #pdf_path_img = os.path.join(output_dir, f"{name}_{surname}.png")
     output_img = remove(img)
      
     cropped_output_img = remove_low_alpha_pixels(output_img, threshold=128)
     bbox = cropped_output_img.getbbox(alpha_only=True)
     alpha_bbox_output_img = output_img.crop(bbox)  
-    alpha_bbox_output_img.save(pdf_path_img, format='PNG', resolution=300) 
+    #alpha_bbox_output_img.save(pdf_path_img, format='PNG', resolution=300) 
 
+    #positioning the alpha_bbox trimmed image on the background
+    # Margins
+    left_right_margin = 1
+    bottom_margin = 61
+    top_margin = 69
+    
+    # Calculate the available width and height for the person image
+    available_width = BG_WIDTH - 2 * left_right_margin
+    available_height = BG_HEIGHT - bottom_margin - top_margin
+    
+    # Determine the scaling factor to fit the image within these dimensions
+    person_width, person_height = alpha_bbox_output_img.size
+    scale_factor_width = available_width / person_width
+    scale_factor_height = available_height / person_height
+    
+    # Use the smaller scale factor to ensure the image fits within both width and height constraints
+    scale_factor = min(scale_factor_width, scale_factor_height)
+    
+    # Resize the person image
+    new_person_width = int(person_width * scale_factor)
+    new_person_height = int(person_height * scale_factor)
+    person_img_resized = alpha_bbox_output_img.resize((new_person_width, new_person_height))
+    print("Person size: ", person_img_resized)
+    
+    # Calculate the position: align based on the bottom margin and centering horizontally
+    x_position = (BG_WIDTH - new_person_width) // 2
+    y_position = BG_HEIGHT - new_person_height - bottom_margin
+    print("Position: ", x_position, y_position)
+    
+    # Create the final image
+    final_image = combined.copy()
+    final_image.paste(person_img_resized, (x_position, y_position), person_img_resized)
+    # Now update 'combined' to reflect the image after positioning
+    combined = final_image.copy()   
+
+
+    #adding text and overlay layers
     font_path_regular = os.path.join(ASSETS_DIR, "Impact.ttf")
     
     name_font = load_font(font_path_regular, NAME_FONT_SIZE)
