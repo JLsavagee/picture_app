@@ -1,5 +1,6 @@
 from flask import Blueprint, request, send_file
 from services.image_service import process_image
+from services.folder_loop import images
 
 image_blueprint = Blueprint('image', __name__)
 
@@ -8,7 +9,8 @@ def upload_image():
     if 'image' not in request.files or 'background' not in request.files:
         return {"error": "Both image and background must be provided"}, 400
 
-    image_file = request.files['image']
+    #image_file = request.files['image']
+    folder_images = images
     background_file = request.files['background']
     name = request.form.get('name', '')
     surname = request.form.get('surname', '')
@@ -16,7 +18,8 @@ def upload_image():
     trikotnummer = request.form.get('trikotnummer', '')
     zoom_factor = request.form.get('dimension', '')
 
-    result = process_image(image_file, background_file, name, surname, position, trikotnummer)
+    for image in folder_images:
+        result = process_image(image, background_file, name, surname, position, trikotnummer)
 
     if 'error' in result:
         return result, 400

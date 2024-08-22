@@ -35,6 +35,18 @@ backside_img = Image.open(backside).convert("RGBA")
 backside_img = backside_img.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 backside_img.save(backside_path, format='PDF', resolution=300)
 
+def generate_unique_filename(name, surname, output_dir):
+    base_filename = f"{name}_{surname}"
+    file_number = 1
+    pdf_path = os.path.join(output_dir, f"{base_filename}_{file_number}.pdf")
+
+    # Increment the number until a unique filename is found
+    while os.path.exists(pdf_path):
+        file_number += 1
+        pdf_path = os.path.join(output_dir, f"{base_filename}_{file_number}.pdf")
+
+    return pdf_path
+
 def get_bounding_box(img):
     bbox = img.getbbox()
     return bbox
@@ -47,7 +59,7 @@ def remove_low_alpha_pixels(alpha_image, threshold=128):
     return alpha_image
 
 def process_image(image_file, background_file, name, surname, position, trikotnummer):
-    img = Image.open(image_file.stream).convert("RGBA")
+    img = Image.open(io.BytesIO(image_file)).convert("RGBA")
     background = Image.open(background_file.stream).convert("RGBA")
 
     background = background.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
@@ -131,7 +143,7 @@ def process_image(image_file, background_file, name, surname, position, trikotnu
 
     
     os.makedirs(output_dir, exist_ok=True)
-    pdf_path = os.path.join(output_dir, f"{name}_{surname}.pdf")
+    pdf_path = generate_unique_filename(name, surname, output_dir)
     combined.save(pdf_path, format='PDF', resolution=300)
 
     merge_pdfs(pdf_path, backside_path, pdf_path)
