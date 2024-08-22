@@ -8,11 +8,12 @@
 <body>
     <h1>Upload an Image to Remove Background</h1>
     <form id="upload-form" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
+        <input type="text" name="folder-id" placeholder="insert folder-id" value="10TZJod3vKArx0XBPf6XLIcultMxtj-87">
+        <input type="file" name="image" accept="image/*">
         <input type="file" name="background" accept="image/*" required>
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="text" name="surname" placeholder="Surname" required>
-        <select name="position" required>
+        <input type="text" name="name" placeholder="Name">
+        <input type="text" name="surname" placeholder="Surname">
+        <select name="position">
             <option value="" disabled selected>Position</option>
             <option value="MITTELFELD">MITTELFELD</option>
             <option value="ABWEHR">Abwehr</option>
@@ -20,7 +21,6 @@
             <option value="TORWART">Torwart</option>
             <option value="TRAINER">Trainer</option>
         </select>
-        <input type="text" name="dimension" placeholder="Change Image Size">
         <button type="submit">Upload</button>
     </form>
     <div id="result">
