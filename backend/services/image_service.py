@@ -39,6 +39,13 @@ def get_bounding_box(img):
     bbox = img.getbbox()
     return bbox
 
+def remove_low_alpha_pixels(alpha_image, threshold=128):
+    r, g, b, a = alpha_image.split()
+    mask = a.point(lambda p: 255 if p>= threshold else 0)
+    new_alpha = Image.composite(a, Image.new("L", alpha_image.size, 0), mask)
+    alpha_image.putalpha(new_alpha)
+    return alpha_image
+
 def process_image(image_file, background_file, name, surname, position, trikotnummer):
     img = Image.open(image_file.stream).convert("RGBA")
     background = Image.open(background_file.stream).convert("RGBA")
@@ -46,46 +53,54 @@ def process_image(image_file, background_file, name, surname, position, trikotnu
     background = background.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
     print("background size: ", background)
 
+    combined = background
+    output_dir = os.path.join(os.path.dirname(__file__), '..', 'output')
+
+    #pdf_path_img = os.path.join(output_dir, f"{name}_{surname}.png")
     output_img = remove(img)
+     
+    cropped_output_img = remove_low_alpha_pixels(output_img, threshold=128)
+    bbox = cropped_output_img.getbbox(alpha_only=True)
+    alpha_bbox_output_img = output_img.crop(bbox)  
+    #alpha_bbox_output_img.save(pdf_path_img, format='PNG', resolution=300) 
 
-    # Get the bounding box of the non-transparent pixels
-    bbox = get_bounding_box(output_img)
+    #positioning the alpha_bbox trimmed image on the background
+    # Margins
+    left_right_margin = 1
+    bottom_margin = 61
+    top_margin = 69
+    
+    # Calculate the available width and height for the person image
+    available_width = BG_WIDTH - 2 * left_right_margin
+    available_height = BG_HEIGHT - bottom_margin - top_margin
+    
+    # Determine the scaling factor to fit the image within these dimensions
+    person_width, person_height = alpha_bbox_output_img.size
+    scale_factor_width = available_width / person_width
+    scale_factor_height = available_height / person_height
+    
+    # Use the smaller scale factor to ensure the image fits within both width and height constraints
+    scale_factor = min(scale_factor_width, scale_factor_height)
+    
+    # Resize the person image
+    new_person_width = int(person_width * scale_factor)
+    new_person_height = int(person_height * scale_factor)
+    person_img_resized = alpha_bbox_output_img.resize((new_person_width, new_person_height))
+    print("Person size: ", person_img_resized)
+    
+    # Calculate the position: align based on the bottom margin and centering horizontally
+    x_position = (BG_WIDTH - new_person_width) // 2
+    y_position = BG_HEIGHT - new_person_height - bottom_margin
+    print("Position: ", x_position, y_position)
+    
+    # Create the final image
+    final_image = combined.copy()
+    final_image.paste(person_img_resized, (x_position, y_position), person_img_resized)
+    # Now update 'combined' to reflect the image after positioning
+    combined = final_image.copy()   
 
-    # Calculate the centered bounding box coordinates
-    bbox_width = bbox[2] - bbox[0]
-    bbox_height = bbox[3] - bbox[1]
-    bbox_x1 = (BG_WIDTH - bbox_width) // 2
-    bbox_y1 = (BG_HEIGHT - bbox_height) // 2
 
-    print("Centered Box Size: ", bbox_x1, bbox_y1, bbox_width, bbox_height)
-
-    # Extract the non-transparent region
-    non_transparent_region = output_img.crop(bbox)
-
-    # Resize the non-transparent region to fit within the padding
-    max_width = BG_WIDTH - 2 * PADDING
-    max_height = BG_HEIGHT - BORDER_SIZE - PADDING
-
-    scale_factor = min(max_width / bbox_width, max_height / bbox_height)
-
-    new_width = int(bbox_width * scale_factor)
-    new_height = int(bbox_height * scale_factor)
-    non_transparent_region = non_transparent_region.resize((new_width, new_height), Image.LANCZOS)
-
-    # Create a new blank image with the same size as the background
-    centered_image = Image.new("RGBA", (BG_WIDTH, BG_HEIGHT), (0, 0, 0, 0))
-
-    # Calculate the centered position of the non-transparent region within the new image
-    centered_region_x = (BG_WIDTH - new_width) // 2
-    centered_region_y = (BG_HEIGHT - new_height) // 2
-
-    # Paste the non-transparent region onto the centered image
-    centered_image.paste(non_transparent_region, (centered_region_x, centered_region_y), non_transparent_region)
-
-    # Combine the centered image onto the background
-    combined = background.copy()
-    combined.paste(centered_image, (0, 0), centered_image)
-
+    #adding text and overlay layers
     font_path_regular = os.path.join(ASSETS_DIR, "Impact.ttf")
     
     name_font = load_font(font_path_regular, NAME_FONT_SIZE)
@@ -114,7 +129,7 @@ def process_image(image_file, background_file, name, surname, position, trikotnu
     combined.save(output, format='PNG')
     output.seek(0)
 
-    output_dir = os.path.join(os.path.dirname(__file__), '..', 'output')
+    
     os.makedirs(output_dir, exist_ok=True)
     pdf_path = os.path.join(output_dir, f"{name}_{surname}.pdf")
     combined.save(pdf_path, format='PDF', resolution=300)
