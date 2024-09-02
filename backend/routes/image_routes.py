@@ -16,7 +16,9 @@ def upload_image():
     surname = request.form.get('surname', '')
     position = request.form.get('position', '')
     trikotnummer = request.form.get('trikotnummer', '')
-    
+
+    image_file = image_file.read()
+
     result = None
 
     if 'folder-id' in request.form and folder_id:
