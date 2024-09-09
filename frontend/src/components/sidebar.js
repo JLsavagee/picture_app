@@ -10,12 +10,12 @@ const Sidebar = () => {
             <ul>
                 <li>
                     <a href="/page1">
-                        <button>Page 1</button>
+                        <button>Manual</button>
                     </a>
                 </li>
                 <li>
                     <a href="/page2">
-                        <button>Page 2</button>
+                        <button>Automatic</button>
                     </a>
                 </li>
             </ul>
