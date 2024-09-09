@@ -1,21 +1,22 @@
 // Sidebar.js
 import React from 'react';
 import { Link } from 'react-router-dom';
+import "./css/Sidebar.css";
 
 const Sidebar = () => {
     return (
-        <div style={{ width: '200px', background: '#f0f0f0', height: '100vh', padding: '20px' }}>
+        <div className="sidebar">
             <h2>Menu</h2>
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
+            <ul>
                 <li>
-                    <Link to="/page1">
-                        <button style={{ width: '100%' }}>Page 1</button>
-                    </Link>
+                    <a href="/page1">
+                        <button>Page 1</button>
+                    </a>
                 </li>
-                <li style={{ marginTop: '10px' }}>
-                    <Link to="/page2">
-                        <button style={{ width: '100%' }}>Page 2</button>
-                    </Link>
+                <li>
+                    <a href="/page2">
+                        <button>Page 2</button>
+                    </a>
                 </li>
             </ul>
         </div>
