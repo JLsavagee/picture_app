@@ -15,6 +15,18 @@
     height: 100vh; 
 }
 
+.name-field form {
+    grid-column: 1;  
+}
+
+.surname-field form {
+    grid-column: 2;  
+}
+
+.position-field {
+    grid-column: 3;  
+}
+
 .image-container {
     grid-column: 1 / -1;
     display: flex;
