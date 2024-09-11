@@ -1,21 +1,22 @@
 .manual-page {
+    margin-right: 20%;
     display: grid;
     grid-template-columns: 200px 1fr;
     grid-template-rows: 100px 1fr;
-    gap: 20px;
+    gap: 40px;
     max-width: 100%;          
 }
 
 .manual-content {
     grid-column: 2;
     display: flex;
-    height: 100vh;
+    height: auto;
 }
 
 #manual-upload-form {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);  /* 3 columns for form fields */
+    grid-template-columns: repeat(2, 1fr);  /* 3 columns for form fields */
     grid-template-rows: auto auto;  /* Adjust number of rows if needed */
     gap: 20px;
 }
@@ -34,9 +35,48 @@
 
 .image-container {
     grid-column: 1 / -1; /* Span across all columns */
+    margin-top: 40px;
     display: flex;
     justify-content: space-around;
+    flex-wrap: wrap;
 }
+
+.image-placeholder-box {
+    width: 100%;
+    max-width: 250px;
+    height: 315px; /* Same height as the max-height of the image */
+    margin-top: 20px;
+    background-color: #e0e0e0; /* Grey background */
+    display: flex; /* Flexbox to center content */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    color: #888; /* Lighter text for the placeholder */
+    border: 2px solid #ddd; /* Light border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for aesthetics */
+    font-size: 14px; /* Font size for the placeholder text */
+}
+
+
+.image-preview {
+    width: 100%;
+    height: auto;
+    max-height: 325px;
+    margin-top: 20px;
+    object-fit: cover; /* Ensures the image fits within the box without distortion */
+    border: 2px solid #ddd; /* Light border around the image */
+    border-radius: 8px; /* Rounded corners */
+    margin-top: 10px; /* Spacing from the upload button */
+    display: block; /* Ensures the image is displayed as a block */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for aesthetics */
+}
+
+.image-upload, .background-upload {
+    flex-basis: 15%; /* Set width to 25% */
+    text-align: center; /* Center the content inside each flex item */
+}
+
 .manual-create-button {
+    grid-row: 3;
     grid-column: 3;
 }

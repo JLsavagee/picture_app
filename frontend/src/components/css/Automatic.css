@@ -1,4 +1,5 @@
 .automatic-page {
+    margin-right: 20%;
     display: grid;
     grid-template-columns: 200px 1fr;
     grid-template-rows: 100px 1fr;
@@ -8,14 +9,19 @@
 
 .automatic-content {
     grid-column: 2;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, auto); 
-    gap: 20px;  
-    height: 100vh; 
+    display: flex;
+    height: auto;
 }
 
-.background-upload {
+#automatic-upload-form {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);  /* 3 columns for form fields */
+    grid-template-rows: auto auto;  /* Adjust number of rows if needed */
+    gap: 20px;
+}
+
+.auto-background-upload {
     grid-row: 2;
 }
 
@@ -26,4 +32,24 @@
 .auto-create-button {
     grid-row: 3;
     grid-column: 2;
+}
+
+.image-upload{
+    flex-basis: 15%; /* Set width to 25% */
+}
+
+.placeholder-box {
+    width: 100%; /* Fills the container's width (25%) */
+    max-width: 700px; 
+    height: 325px; /* Same height as the max-height of the image */
+    margin-top: 20px;
+    background-color: #e0e0e0; /* Grey background */
+    display: flex; /* Flexbox to center content */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    color: #888; /* Lighter text for the placeholder */
+    border: 2px solid #ddd; /* Light border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for aesthetics */
+    font-size: 14px; /* Font size for the placeholder text */
 }
