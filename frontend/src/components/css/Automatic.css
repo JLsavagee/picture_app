@@ -3,7 +3,7 @@
     display: grid;
     grid-template-columns: 200px 1fr;
     grid-template-rows: 100px 1fr;
-    gap: 20px;
+    gap: 40px;
     max-width: 100%;
 }
 
@@ -38,18 +38,32 @@
     flex-basis: 15%; /* Set width to 25% */
 }
 
-.placeholder-box {
-    width: 100%; /* Fills the container's width (25%) */
-    max-width: 700px; 
-    height: 325px; /* Same height as the max-height of the image */
-    margin-top: 20px;
-    background-color: #e0e0e0; /* Grey background */
-    display: flex; /* Flexbox to center content */
-    justify-content: center; /* Center content horizontally */
-    align-items: center; /* Center content vertically */
-    color: #888; /* Lighter text for the placeholder */
-    border: 2px solid #ddd; /* Light border */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for aesthetics */
-    font-size: 14px; /* Font size for the placeholder text */
-}
+.scrollable-container {
+    height: 400px;
+    overflow: auto;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+  }
+  
+  .scrollable-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .scrollable-container table td {
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: left;
+  }
+  
+  .scrollable-container table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .placeholder-box {
+    padding: 20px;
+    border: 1px dashed #ccc;
+    text-align: center;
+    color: #888;
+  }
+  

@@ -1,10 +1,12 @@
 // Page2.js
 import React, { useState } from 'react';
+import * as XLSX from 'xlsx';
 import Sidebar from '../components/sidebar';
 import "./css/Automatic.css";
 
 const Page2 = () => {
     const [backgroundPreview, setBackgroundPreview] = useState(null);
+    const [nameListData, setNameListData] = useState([]);
 
     const handleBackgroundChange = (event) => {
         const file = event.target.files[0];
@@ -17,6 +19,44 @@ const Page2 = () => {
         }
     };
 
+    const handleNameListChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const fileExtension = file.name.split('.').pop().toLowerCase();
+      
+          if (fileExtension === 'csv') {
+            handleCSV(file);
+          } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+            handleXLSX(file);
+          } else {
+            alert('Unsupported file type!');
+          }
+        }
+      };
+      
+      const handleCSV = (file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const text = e.target.result;
+          const lines = text.split('\n').map(line => line.split(','));
+          setNameListData(lines);
+        };
+        reader.readAsText(file);
+      };
+
+      const handleXLSX = (file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          setNameListData(jsonData);
+        };
+        reader.readAsArrayBuffer(file);
+      };      
+      
     const handleSubmit = async (event) => {
         event.preventDefault();
         
@@ -61,9 +101,30 @@ const Page2 = () => {
                                 )}
                     </div>
                     <div className='list-preview'>
-                        <p>List-preview</p>
-                        <input type="file" name="background" accept="image/*" />
-                        <div className="placeholder-box">Name-List Preview</div>
+                        <p>List Preview</p>
+                        <input
+                            type="file"
+                            name="name-list"
+                            accept=".csv, .xlsx, .xls"
+                            onChange={handleNameListChange}
+                        />
+                        <div className="scrollable-container">
+                            {nameListData.length > 0 ? (
+                            <table>
+                                <tbody>
+                                {nameListData.map((row, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                    {row.map((cell, cellIndex) => (
+                                        <td key={cellIndex}>{cell}</td>
+                                    ))}
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                            ) : (
+                            <div className="placeholder-box">Name-List Preview</div>
+                            )}
+                        </div>
                     </div>
                     <div className="auto-create-button">
                         <button type="submit">Generate</button>
