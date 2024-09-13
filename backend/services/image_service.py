@@ -58,9 +58,10 @@ def remove_low_alpha_pixels(alpha_image, threshold=128):
     alpha_image.putalpha(new_alpha)
     return alpha_image
 
-def process_image(image_file, background_file, name, surname, position, trikotnummer):
-    img = Image.open(io.BytesIO(image_file)).convert("RGBA")
-    background = Image.open(background_file.stream).convert("RGBA")
+def process_image(image_file_content, background_file_content, name, surname, position, trikotnummer):
+    print(type(image_file_content))  # Should be bytes
+    img = Image.open(io.BytesIO(image_file_content)).convert("RGBA")
+    background = Image.open(io.BytesIO(background_file_content)).convert("RGBA")
 
     background = background.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
     print("background size: ", background)
@@ -148,4 +149,4 @@ def process_image(image_file, background_file, name, surname, position, trikotnu
 
     merge_pdfs(pdf_path, backside_path, pdf_path)
 
-    return {'output': output}
+    return {'pdf_path': pdf_path}

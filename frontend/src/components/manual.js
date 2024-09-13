@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from '../components/sidebar';
 import "./css/Manual.css";
 
-const Page1 = () => {
+const Manual = () => {
     const [imagePreview, setImagePreview] = useState(null);
     const [backgroundPreview, setBackgroundPreview] = useState(null);
 
@@ -40,7 +40,7 @@ const Page1 = () => {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/upload', {
+            const response = await fetch('http://127.0.0.1:5000/upload/manual', {
                 method: 'POST',
                 body: formData
             });
@@ -104,4 +104,4 @@ const Page1 = () => {
     )
 }
 
-export default Page1;
+export default Manual;

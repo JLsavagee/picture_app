@@ -1,10 +1,10 @@
-// Page2.js
+// automatic.js
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import Sidebar from '../components/sidebar';
 import "./css/Automatic.css";
 
-const Page2 = () => {
+const Automatic = () => {
     const [backgroundPreview, setBackgroundPreview] = useState(null);
     const [nameListData, setNameListData] = useState([]);
 
@@ -69,7 +69,7 @@ const Page2 = () => {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/upload', {
+            const response = await fetch('http://127.0.0.1:5000/upload/automatic', {
                 method: 'POST',
                 body: formData
             });
@@ -135,4 +135,4 @@ const Page2 = () => {
     )
 }
 
-export default Page2;
+export default Automatic;
