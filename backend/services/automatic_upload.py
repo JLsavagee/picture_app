@@ -28,6 +28,9 @@ def download_images_in_memory(folder_id):
 
     items = results.get('files', [])
 
+    # Sort the items list by the name property to ensure the images are downloaded in name order
+    items.sort(key=lambda x: x['name'])
+
     for item in items:
         file_id = item['id']
         file_name = item['name']
