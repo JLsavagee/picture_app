@@ -38,6 +38,20 @@
     flex-basis: 15%; /* Set width to 25% */
 }
 
+.auto-image-preview {
+  width: 100%;
+  max-width: fit-content;
+  height: auto;
+  max-height: 325px;
+  margin-top: 20px;
+  object-fit: cover; /* Ensures the image fits within the box without distortion */
+  border: 2px solid #ddd; /* Light border around the image */
+  border-radius: 8px; /* Rounded corners */
+  margin-top: 10px; /* Spacing from the upload button */
+  display: block; /* Ensures the image is displayed as a block */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for aesthetics */
+}
+
 .scrollable-container {
     height: 400px;
     overflow: auto;
