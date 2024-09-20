@@ -1,3 +1,24 @@
 backend/team-cards-photo-edit-9a387c2ffb58.json
-.DS_Store
+
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Ignore virtual environment folder
 venv/
+env/
+
+# Ignore log files
+*.log
+
+# Ignore output directories (like where processed files might go)
+output/
+
+# Ignore any database files if applicable
+*.sqlite3
+
+# Ignore system files
+.DS_Store
+Thumbs.db
