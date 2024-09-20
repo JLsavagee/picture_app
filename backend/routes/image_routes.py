@@ -15,9 +15,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # Helper function to read the name list
 def read_name_list(name_list_file_path):
     if name_list_file_path.endswith('.csv'):
-        df = pd.read_csv(name_list_file_path, header=None, dtype=(str))
+        df = pd.read_csv(name_list_file_path, header=0, dtype=(str))
     elif name_list_file_path.endswith(('.xlsx', '.xls')):
-        df = pd.read_excel(name_list_file_path, header=None, dtype=(str))
+        df = pd.read_excel(name_list_file_path, header=0, dtype=(str))
     else:
         raise ValueError('Unsupported file type for name list.')
 
