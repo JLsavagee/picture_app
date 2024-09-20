@@ -1,4 +1,3 @@
-// automatic.js
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import Sidebar from '../components/sidebar';
@@ -7,6 +6,7 @@ import "./css/Automatic.css";
 const Automatic = () => {
     const [backgroundPreview, setBackgroundPreview] = useState(null);
     const [nameListData, setNameListData] = useState([]);
+    const [processing, setProcessing] = useState(false);
 
     const handleBackgroundChange = (event) => {
         const file = event.target.files[0];
@@ -56,29 +56,56 @@ const Automatic = () => {
         };
         reader.readAsArrayBuffer(file);
       };      
-      
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         
         const formData = new FormData(event.target);
 
-        // Log all form data before submission 
-        console.log("Form data before submission:");
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-
         try {
+            setProcessing(true);
             const response = await fetch('http://127.0.0.1:5000/upload/automatic', {
                 method: 'POST',
                 body: formData
             });
+
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
             }
+
+            // Start polling for status after submission
+            pollForProcessingStatus();
+            
         } catch (error) {
             console.error('Error:', error);
+            setProcessing(false); // Reset processing state in case of error
         }
+    };
+
+    const pollForProcessingStatus = async () => {
+        const pollInterval = 5000; // Poll every 5 seconds
+
+        const checkProcessingStatus = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/check_processing_status');
+                const data = await response.json();
+
+                if (data.status === 'completed') {
+                    // Trigger ZIP download
+                    window.location.href = 'http://127.0.0.1:5000/download_zip';
+                    setProcessing(false); // Processing is done
+                } else {
+                    // Keep polling if processing is still ongoing
+                    setTimeout(checkProcessingStatus, pollInterval);
+                }
+            } catch (error) {
+                console.error('Error while polling:', error);
+                setProcessing(false); // Reset processing state in case of error
+            }
+        };
+
+        // Start polling
+        checkProcessingStatus();
     };
 
     return (
@@ -97,7 +124,7 @@ const Automatic = () => {
                                 {backgroundPreview ? (
                                     <img src={backgroundPreview} alt="Background Preview" className="auto-image-preview" />
                                 ) : (
-                                    <div className="image-placeholder-box">Background Preview</div> // Placeholder for background
+                                    <div className="image-placeholder-box">Background Preview</div>
                                 )}
                     </div>
                     <div className='list-preview'>
@@ -127,7 +154,9 @@ const Automatic = () => {
                         </div>
                     </div>
                     <div className="auto-create-button">
-                        <button type="submit">Generate</button>
+                        <button type="submit" disabled={processing}>
+                            {processing ? 'Processing...' : 'Done'}
+                        </button>
                     </div>
                 </form>    
             </div>
