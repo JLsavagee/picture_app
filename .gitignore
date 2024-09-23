@@ -7,8 +7,8 @@ __pycache__/
 *.pyd
 
 # Ignore virtual environment folder
-venv/
-env/
+./venv/*
+./env/*
 
 # Ignore log files
 *.log
