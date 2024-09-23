@@ -28,3 +28,9 @@ backend/temp/
 backend/logs/
 *.tmp
 
+# Ignore backend cache files and generated content
+**/*.pyc
+**/__pycache__/
+output/
+processed_pdfs.zip
+
