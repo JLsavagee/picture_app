@@ -32,10 +32,16 @@ def read_name_list(name_list_file_path):
 
 @image_blueprint.route('/upload/manual', methods=['GET', 'POST'])
 def upload_manual():
+    global processing_status 
+
     if request.method == 'POST':
+
+        processing_status = "in progress"
+
         clear_output_directory(OUTPUT_FOLDER)
         # Check required files
         if 'background' not in request.files or 'image' not in request.files:
+            processing_status = "idle"
             return {"error": "Background and image must be provided"}, 400
 
         # Get form data
@@ -61,10 +67,12 @@ def upload_manual():
         )
 
         if 'error' in result:
+            processing_status = "idle"
             return result, 400
 
         # Return processed PDF
         pdf_path = result.get('pdf_path')
+        processing_status = "completed"
         return send_file(pdf_path, mimetype='application/pdf', as_attachment=True,
                          download_name=os.path.basename(pdf_path))
     else:
@@ -158,3 +166,31 @@ def download_zip():
         return send_file(zip_filename)
     else:
         return {"error": "Processing not completed yet"}, 400
+    
+@image_blueprint.route('/download_manual', methods=['GET'])
+def download_manual():
+    global processing_status
+    if processing_status == "completed":
+         # Get the list of files in the output folder
+        files_in_output = os.listdir(OUTPUT_FOLDER)
+
+        # Check if there's at least one file in the output folder
+        if len(files_in_output) == 0:
+            return {"error": "No processed image found in the output folder"}, 404
+
+        # Assuming there is only one processed image file in the output folder
+        processed_image_filename = files_in_output[0]  # Take the first file (if there's only one)
+        processed_image_path = os.path.join(OUTPUT_FOLDER, processed_image_filename)
+
+        # Check if the image exists
+        if not os.path.exists(processed_image_path):
+            return {"error": "Processed image not found"}, 404
+
+        # Send the processed image as a file for download with the same filename
+        return send_file(processed_image_path, mimetype='image/png', as_attachment=True,
+                         download_name=processed_image_filename)
+    else:
+        # If the processing is not yet completed
+        return {"error": "Processing not completed yet"}, 400
+
+

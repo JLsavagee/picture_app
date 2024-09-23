@@ -155,7 +155,7 @@ const Automatic = () => {
                     </div>
                     <div className="auto-create-button">
                         <button type="submit" disabled={processing}>
-                            {processing ? 'Processing...' : 'Done'}
+                            {processing ? 'Processing...' : 'Generate'}
                         </button>
                     </div>
                 </form>    

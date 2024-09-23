@@ -5,6 +5,7 @@ import "./css/Manual.css";
 const Manual = () => {
     const [imagePreview, setImagePreview] = useState(null);
     const [backgroundPreview, setBackgroundPreview] = useState(null);
+    const [processing, setProcessing] = useState(false);
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -40,6 +41,7 @@ const Manual = () => {
         }
 
         try {
+            setProcessing(true);
             const response = await fetch('http://127.0.0.1:5000/upload/manual', {
                 method: 'POST',
                 body: formData
@@ -47,9 +49,38 @@ const Manual = () => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
             }
+
+            pollForProcessingStatus();
+
         } catch (error) {
             console.error('Error:', error);
         }
+    };
+
+    const pollForProcessingStatus = async () => {
+        const pollInterval = 5000; // Poll every 5 seconds
+
+        const checkProcessingStatus = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/check_processing_status');
+                const data = await response.json();
+
+                if (data.status === 'completed') {
+                    // Trigger manual download
+                    window.location.href = 'http://127.0.0.1:5000/download_manual';
+                    setProcessing(false); // Processing is done
+                } else {
+                    // Keep polling if processing is still ongoing
+                    setTimeout(checkProcessingStatus, pollInterval);
+                }
+            } catch (error) {
+                console.error('Error while polling:', error);
+                setProcessing(false); // Reset processing state in case of error
+            }
+        };
+
+        // Start polling
+        checkProcessingStatus();
     };
 
     return (
@@ -96,7 +127,9 @@ const Manual = () => {
                         </div>
                     </div>
                     <div className="manual-create-button">
-                        <button type="submit">Create</button>
+                        <button type="submit" disabled={processing}>
+                            {processing ? 'Processing...' : 'Create'}
+                        </button>    
                     </div>
                 </form>
             </div>
