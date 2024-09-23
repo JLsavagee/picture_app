@@ -22,3 +22,9 @@ output/
 # Ignore system files
 .DS_Store
 Thumbs.db
+
+# Ignore any files generated when running the backend
+backend/temp/
+backend/logs/
+*.tmp
+
