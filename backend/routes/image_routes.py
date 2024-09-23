@@ -155,19 +155,6 @@ def download_zip():
     if processing_status == "completed":
         zip_filename = create_zip_from_output(OUTPUT_FOLDER)
 
-        @after_this_request
-        def clear_output_directory(response):
-            try:
-                # Clear all files in the output directory
-                for filename in os.listdir(OUTPUT_FOLDER):
-                    file_path = os.path.join(OUTPUT_FOLDER, filename)
-                    if os.path.isfile(file_path):
-                        os.remove(file_path)
-                print(f"Cleared all files in {OUTPUT_FOLDER}")
-            except Exception as e:
-                print(f"Error clearing output directory: {e}")
-            return response
-    
         return send_file(zip_filename)
     else:
         return {"error": "Processing not completed yet"}, 400
