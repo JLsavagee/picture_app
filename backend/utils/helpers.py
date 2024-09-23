@@ -1,5 +1,6 @@
 from PIL import ImageFont, Image, ImageDraw
 from PyPDF2 import PdfWriter, PdfReader
+import os
 
 def load_font(font_path, font_size):
     try:
@@ -75,3 +76,14 @@ def merge_pdfs(pdf1_path, pdf2_path, output_pdf_path):
 
     with open(output_pdf_path, 'wb') as f:
         writer.write(f)
+
+def clear_output_directory(output_folder):
+    try:
+        for filename in os.listdir(output_folder):
+            file_path = os.path.join(output_folder, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        print(f"Cleared all files in {output_folder}")
+    except Exception as e:
+        print(f"Error clearing output directory: {e}")
+

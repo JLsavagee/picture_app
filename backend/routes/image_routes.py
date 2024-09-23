@@ -3,6 +3,7 @@ from flask import Blueprint, request, send_file, render_template, jsonify, after
 from services.image_service import process_image
 from services.automatic_upload import download_images_in_memory
 from services.zip_service import create_zip_from_output
+from utils.helpers import clear_output_directory
 from werkzeug.utils import secure_filename
 import os
 import pandas as pd
@@ -32,6 +33,7 @@ def read_name_list(name_list_file_path):
 @image_blueprint.route('/upload/manual', methods=['GET', 'POST'])
 def upload_manual():
     if request.method == 'POST':
+        clear_output_directory(OUTPUT_FOLDER)
         # Check required files
         if 'background' not in request.files or 'image' not in request.files:
             return {"error": "Background and image must be provided"}, 400
@@ -76,6 +78,8 @@ def upload_automatic():
     if request.method == 'POST':
         try:
             processing_status = "in progress"  # Set status to in progress
+
+            clear_output_directory(OUTPUT_FOLDER)
             
             # Check required files
             if 'background' not in request.files or 'name-list' not in request.files:
@@ -159,7 +163,7 @@ def download_zip():
                     file_path = os.path.join(OUTPUT_FOLDER, filename)
                     if os.path.isfile(file_path):
                         os.remove(file_path)
-                print(f"Cleared all files in")
+                print(f"Cleared all files in {OUTPUT_FOLDER}")
             except Exception as e:
                 print(f"Error clearing output directory: {e}")
             return response
