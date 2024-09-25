@@ -112,7 +112,7 @@ const Manual = () => {
                         <div className='image-upload'>
                             <input type="file" name="image" accept="image/*" onChange={handleImageChange} />
                             {imagePreview ? (
-                                <img src={imagePreview} alt="Image Preview" className="image-preview" />
+                                <img src={imagePreview} alt="Preview" className="image-preview" />
                             ) : (
                                 <div className="image-placeholder-box">Image Preview</div> // Placeholder for image
                             )}
