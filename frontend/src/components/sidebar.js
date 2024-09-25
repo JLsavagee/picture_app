@@ -8,7 +8,7 @@ const Sidebar = () => {
             <h2>Menu</h2>
             <ul>
                 <li>
-                    <a href="/page1">
+                    <a href="/">
                         <button>Manual</button>
                     </a>
                 </li>
