@@ -21,16 +21,16 @@ MAX_TEXT_WIDTH = 700
 BORDER_SIZE = 61
 PADDING = 25
 
-ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'src', 'assets', 'fonts')
+ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fonts')
 
-FIXED_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'src', 'assets', 'fixed_layers', 'Positionsfeld-Grün.png')
-CAMP_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'src', 'assets', 'fixed_layers', 'WLS_Logo.png')
-SPONSOR_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'src', 'assets', 'fixed_layers', 'DominosLogo.png')
+FIXED_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'Positionsfeld-Grün.png')
+CAMP_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'WLS_Logo.png')
+SPONSOR_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'DominosLogo.png')
 
-backside = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'src', 'assets', 'fixed_layers', 'dominos_backside.png')
+backside = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'dominos_backside.png')
 
 # Transforming backside
-backside_path = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'src', 'assets', 'fixed_layers', 'backside_pdf')
+backside_path = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'backside_pdf')
 backside_img = Image.open(backside).convert("RGBA")
 backside_img = backside_img.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 backside_img.save(backside_path, format='PDF', resolution=300)

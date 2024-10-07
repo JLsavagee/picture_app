@@ -30,6 +30,10 @@ def read_name_list(name_list_file_path):
     names_list = df.values.tolist()
     return names_list
 
+@image_blueprint.route('/', methods=['GET'])
+def index():
+    return 'Welcome to the Image Processing API!'
+
 @image_blueprint.route('/upload/manual', methods=['GET', 'POST'])
 def upload_manual():
     global processing_status 

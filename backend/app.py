@@ -10,4 +10,4 @@ app.register_blueprint(image_blueprint, url_prefix='/')
 
 if __name__ == '__main__':
     print("Starting Flask app...")
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=False)
