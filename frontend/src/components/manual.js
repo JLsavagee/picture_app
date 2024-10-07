@@ -42,7 +42,7 @@ const Manual = () => {
 
         try {
             setProcessing(true);
-            const response = await fetch('http://127.0.0.1:5000/upload/manual', {
+            const response = await fetch('http://13.60.237.14:8000/upload/manual', {
                 method: 'POST',
                 body: formData
             });
@@ -62,12 +62,12 @@ const Manual = () => {
 
         const checkProcessingStatus = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:5000/check_processing_status');
+                const response = await fetch('http://13.60.237.14:8000/check_processing_status');
                 const data = await response.json();
 
                 if (data.status === 'completed') {
                     // Trigger manual download
-                    window.location.href = 'http://127.0.0.1:5000/download_manual';
+                    window.location.href = 'http://13.60.237.14:8000/download_manual';
                     setProcessing(false); // Processing is done
                 } else {
                     // Keep polling if processing is still ongoing
