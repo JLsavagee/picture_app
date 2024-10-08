@@ -8,7 +8,15 @@ from services.image_service import process_image
 
 # Authenticate and initialize the Google Drive API
 SCOPES = ['https://www.googleapis.com/auth/drive']
-SERVICE_ACCOUNT_FILE = 'team-cards-photo-edit-9a387c2ffb58.json'  # Replace with your service account file
+
+# Get the absolute path of the directory containing this script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the path to the credentials file located in the parent directory
+SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, '..', 'team-cards-photo-edit-9a387c2ffb58.json')
+
+# Normalize the path
+SERVICE_ACCOUNT_FILE = os.path.normpath(SERVICE_ACCOUNT_FILE)
 
 credentials = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=SCOPES)
