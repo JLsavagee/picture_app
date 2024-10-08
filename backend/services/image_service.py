@@ -23,14 +23,14 @@ PADDING = 25
 
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fonts')
 
-FIXED_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'Positionsfeld-Grün.png')
+FIXED_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'Ellipse 1_Orange.png')
 CAMP_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'WLS_Logo.png')
-SPONSOR_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'DominosLogo.png')
+#SPONSOR_LOGO_PNG_PATH = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'DominosLogo.png')
 
-backside = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'dominos_backside.png')
+backside = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'rückseite.Sam&Sun.png')
 
 # Transforming backside
-backside_path = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'backside_pdf')
+backside_path = os.path.join(os.path.dirname(__file__), '..', 'utils', 'src', 'assets', 'fixed_layers', 'rückseite.Sam&Sun.pdf')
 backside_img = Image.open(backside).convert("RGBA")
 backside_img = backside_img.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
 backside_img.save(backside_path, format='PDF', resolution=300)
@@ -129,9 +129,9 @@ def process_image(image_file_content, background_file_content, name, surname, po
     camp_logo_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
     combined.paste(camp_logo_img, (538, 942), camp_logo_img)
 
-    sponsor_logo_img = Image.open(SPONSOR_LOGO_PNG_PATH).convert("RGBA")
-    sponsor_logo_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
-    combined.paste(sponsor_logo_img, (490, 75), sponsor_logo_img)
+   # sponsor_logo_img = Image.open(SPONSOR_LOGO_PNG_PATH).convert("RGBA")
+   # sponsor_logo_img.thumbnail((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
+   # combined.paste(sponsor_logo_img, (490, 75), sponsor_logo_img)
 
     draw_rotated_text(combined, name, surname, name_font, surname_font, NAME_X, NAME_Y, -90)
     draw = ImageDraw.Draw(combined)
