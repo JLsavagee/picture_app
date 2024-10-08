@@ -64,7 +64,7 @@ const Automatic = () => {
 
         try {
             setProcessing(true);
-            const response = await fetch('http://13.60.237.14:8000/upload/automatic', {
+            const response = await fetch('https://api.team-cards.de/upload/automatic', {
                 method: 'POST',
                 body: formData
             });
@@ -87,12 +87,12 @@ const Automatic = () => {
 
         const checkProcessingStatus = async () => {
             try {
-                const response = await fetch('http://13.60.237.14:8000/check_processing_status');
+                const response = await fetch('https://api.team-cards.de/check_processing_status');
                 const data = await response.json();
 
                 if (data.status === 'completed') {
                     // Trigger ZIP download
-                    window.location.href = 'http://13.60.237.14:8000/download_zip';
+                    window.location.href = 'https://api.team-cards.de/download_zip';
                     setProcessing(false); // Processing is done
                 } else {
                     // Keep polling if processing is still ongoing
