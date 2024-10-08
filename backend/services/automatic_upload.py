@@ -5,6 +5,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from PIL import Image
 import pandas as pd
 from services.image_service import process_image
+import os
 
 # Authenticate and initialize the Google Drive API
 SCOPES = ['https://www.googleapis.com/auth/drive']
