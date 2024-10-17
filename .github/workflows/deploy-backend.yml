@@ -25,6 +25,14 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > /tmp/key.pem
           chmod 600 /tmp/key.pem
 
+ # Step 4: Add the EC2 host key to known_hosts
+      - name: Add EC2 Host Key to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "|1|UY4Jmm7DK0ZfmfdVBLwhnxhuVLQ=|sKpvIAGOs7Brs8fboogE5PcrkNQ= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPqigGMbfDaoKBf/0tPpKUgtWqxy2B26kEm/e6BRI4Cd" >> ~/.ssh/known_hosts
+          echo "|1|jSbq/nLfnviazSo5DUNOVrou3Uc=|sByzZgVMa0V6XJvuQKt+UKwyz94= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDAg3XKX+7tv9iD6Kj5Y26uss5Ru3diLWlthj8hh1i+hnV2AX46JE79z1IF6Ktv+GeXu3SPbsfxPf4/CARgKlYPDs3HNXX48pGs7YKqPCMXPWFwzBCMiv3ByTDBgT5Ukvlh9gGOXweuVHBxLdZGcNdw7bKKOkglFVfJY/ysjgZZWiITh1dSUPF57C9LbYp8YXiMYVzSGDBrAvAZsvCuQlXsruFpWbPKrKfaDEBzbIZ9qGxD+aMn0y9lhs5cCGfMYjf7CcNc52YmEhGA0EU3UPQDBfMHIfDDDNm2wMK8d+TAAv49OS/9rGaydpC1Q2XY5INuC05MD+uEeAgg8o9KFpSuAO2DR1GizyD4XelEwUmFhBB1LERwUENmslTC33yRcT4hZo+7nfgOC5+K+yEYC3VZeHvJqmkVIqVTg1K9wDSV0RzXOlB48XVo4Br8JzLkbtHixOYnprOGSW4LUSxhzzztLB0ut0f8QjE6BiyH9wpAwfEYcsFInWq3VHkPF3jYaZs=" >> ~/.ssh/known_hosts
+          echo "|1|xgknrH881ic9wxgsqwlD6+ymaoE=|oGNH4QVcO2KkwPd3c4uo48ZpJOk= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJ+wfAKSYuvIE5CV+cS2ptbSE+I/f3GXvpJmK3i8M914d6UBegndBlPwNmON7LLMZhLAK9EFev3uLSeCOkij+fI=" >> ~/.ssh/known_hosts
+
       # Step 4: SSH into EC2 and pull the latest code
       - name: Deploy to AWS EC2
         run: |
