@@ -17,7 +17,7 @@ jobs:
       # Step 2: Install backend dependencies (locally before deploying)
       - name: Install Dependencies
         run: |
-          cd TC-Editor-Backend
+          cd ~/TC-Editor-Backend
           pip install -r requirements.txt  # Installing Python dependencies
 
       # Step 3: Set up SSH key (Decode the base64 key and set the right permissions)
