@@ -1,0 +1,37 @@
+name: Deploy Backend to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  # This will trigger on pushes to the 'main' branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the latest code
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # Step 2: Install backend dependencies (locally before deploying)
+      - name: Install Dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt  # Installing Python dependencies
+
+      # Step 3: Set up SSH key (Decode the base64 key and set the right permissions)
+      - name: Setup SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > /tmp/key.pem
+          chmod 600 /tmp/key.pem
+
+      # Step 4: SSH into EC2 and pull the latest code
+      - name: Deploy to AWS EC2
+        run: |
+          ssh -i /tmp/key.pem ubuntu@13.60.237.14 <<EOF
+            cd ~/TC-Editor-Backend/backend  # Make sure this path is correct on your EC2 instance
+            git pull origin main  # Pull the latest code
+            pip install -r requirements.txt  # Install Python dependencies
+            pm2 restart all  # Restart the backend service
+          EOF
