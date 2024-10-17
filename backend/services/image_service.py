@@ -64,7 +64,7 @@ def process_image(image_file_content, background_file_content, name, surname, po
     background = Image.open(io.BytesIO(background_file_content)).convert("RGBA")
 
     background = background.resize((BG_WIDTH, BG_HEIGHT), Image.LANCZOS)
-    print("background size: ", background)
+    print("background size AND RUNNING: ", background)
 
     combined = background
     output_dir = os.path.join(os.path.dirname(__file__), '..', 'output')
