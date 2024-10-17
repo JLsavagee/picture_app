@@ -8,6 +8,8 @@ const Automatic = () => {
     const [nameListData, setNameListData] = useState([]);
     const [processing, setProcessing] = useState(false);
 
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const handleBackgroundChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -64,7 +66,7 @@ const Automatic = () => {
 
         try {
             setProcessing(true);
-            const response = await fetch('https://api.team-cards.de/upload/automatic', {
+            const response = await fetch(`${API_URL}/upload/automatic`, {
                 method: 'POST',
                 body: formData
             });
@@ -87,12 +89,12 @@ const Automatic = () => {
 
         const checkProcessingStatus = async () => {
             try {
-                const response = await fetch('https://api.team-cards.de/check_processing_status');
+                const response = await fetch(`${API_URL}/check_processing_status`);
                 const data = await response.json();
 
                 if (data.status === 'completed') {
                     // Trigger ZIP download
-                    window.location.href = 'https://api.team-cards.de/download_zip';
+                    window.location.href = `${API_URL}/download_zip`;
                     setProcessing(false); // Processing is done
                 } else {
                     // Keep polling if processing is still ongoing

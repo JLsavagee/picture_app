@@ -2,9 +2,28 @@ from flask import Flask
 from flask_cors import CORS
 from routes.image_routes import image_blueprint
 from werkzeug.exceptions import RequestEntityTooLarge
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+if os.getenv("ENV") == "development":
+    load_dotenv(".env.development")
+else:
+    load_dotenv(".env.production")
+
+ENV = os.getenv("ENV")
+API_URL = os.getenv("API_URL")
+FLASK_APP_HOST = os.getenv("FLASK_APP_HOST")
+FLASK_APP_PORT = os.getenv("FLASK_APP_PORT")
+CORS_ORIGINS = os.getenv("CORS_ORIGINS")
+
+# Print to confirm environment
+print(f"Running in {ENV} mode with API URL {API_URL}")
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://editor.team-cards.de"}})
+CORS(app, resources={r"/*": {"origins": CORS_ORIGINS}})
 
 # Set maximum allowed payload to 20 megabytes
 app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024  # 20 MB

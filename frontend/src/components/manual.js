@@ -7,6 +7,8 @@ const Manual = () => {
     const [backgroundPreview, setBackgroundPreview] = useState(null);
     const [processing, setProcessing] = useState(false);
 
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -42,7 +44,7 @@ const Manual = () => {
 
         try {
             setProcessing(true);
-            const response = await fetch('https://api.team-cards.de/upload/manual', {
+            const response = await fetch(`${API_URL}/upload/manual`, {
                 method: 'POST',
                 body: formData
             });
@@ -62,12 +64,12 @@ const Manual = () => {
 
         const checkProcessingStatus = async () => {
             try {
-                const response = await fetch('https://api.team-cards.de/check_processing_status');
+                const response = await fetch(`${API_URL}/check_processing_status`);
                 const data = await response.json();
 
                 if (data.status === 'completed') {
                     // Trigger manual download
-                    window.location.href = 'https://api.team-cards.de/download_manual';
+                    window.location.href = `${API_URL}/download_manual`;
                     setProcessing(false); // Processing is done
                 } else {
                     // Keep polling if processing is still ongoing
