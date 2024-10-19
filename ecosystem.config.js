@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'tc-editor-backend',
       script: './start.sh',
-      interpreter: '/bin/bash',
+      interpreter: 'none',
       cwd: '/home/ubuntu/TC-Editor-Backend/backend',
       env: {
         "FLASK_ENV": "production"
