@@ -8,19 +8,19 @@ import os
 # Load environment variables from .env file
 load_dotenv()
 
-if os.getenv("ENV") == "development":
+if os.getenv("FLASK_ENV") == "development":
     load_dotenv(".env.development")
 else:
     load_dotenv(".env.production")
 
-ENV = os.getenv("ENV")
+FLASK_ENV = os.getenv("FLASK_ENV")
 API_URL = os.getenv("API_URL")
 FLASK_APP_HOST = os.getenv("FLASK_APP_HOST")
 FLASK_APP_PORT = os.getenv("FLASK_APP_PORT")
 CORS_ORIGINS = os.getenv("CORS_ORIGINS")
 
 # Print to confirm environment
-print(f"Running in {ENV} mode with API URL {API_URL}")
+print(f"Running in {FLASK_ENV} mode with API URL {API_URL}")
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": CORS_ORIGINS}})
