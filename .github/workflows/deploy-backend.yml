@@ -45,6 +45,21 @@ jobs:
             # Install Python dependencies
             pip install -r requirements.txt
 
-            # Restart the backend service
-            pm2 restart all
+            # Ensure PM2 is in PATH
+            export PATH="$PATH:$HOME/.local/bin"
+
+            # Check if PM2 is installed
+            if ! command -v pm2 &> /dev/null; then
+              sudo npm install -g pm2
+            fi
+
+            # Check if the application is running and manage it with PM2
+            if ! pm2 describe tc-editor-backend > /dev/null; then
+              # Start the application
+              pm2 start backend/app.py --name tc-editor-backend --interpreter ../venv/bin/python
+            else
+              # Restart the application
+              pm2 restart tc-editor-backend
+            fi
           EOF
+
