@@ -56,8 +56,5 @@ jobs:
             if ! command -v pm2 &> /dev/null; then
               sudo npm install -g pm2
             fi
-
-            # Restart the application using PM2 and the ecosystem file
-            pm2 startOrReload ecosystem.config.js
           EOF
 
