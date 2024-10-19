@@ -31,6 +31,7 @@ jobs:
         run: |
           scp -i /tmp/key.pem -r ./backend ubuntu@13.60.237.14:/home/ubuntu/TC-Editor-Backend/
           scp -i /tmp/key.pem ./requirements.txt ubuntu@13.60.237.14:/home/ubuntu/TC-Editor-Backend/
+          scp -i /tmp/key.pem ./ecosystem.config.js ubuntu@13.60.237.14:/home/ubuntu/TC-Editor-Backend/
 
       # Step 5: SSH into EC2, set up environment, and restart the service
       - name: Deploy to AWS EC2
@@ -39,27 +40,24 @@ jobs:
             # Navigate to the TC-Editor-Backend directory
             cd ~/TC-Editor-Backend
 
+            # Ensure virtual environment exists
+            if [ ! -d "../venv" ]; then
+              python3.11 -m venv ../venv
+            fi
+
             # Activate the virtual environment
             source ../venv/bin/activate
 
             # Install Python dependencies
             pip install -r requirements.txt
 
-            # Ensure PM2 is in PATH
+            # Ensure PM2 is installed and in PATH
             export PATH="$PATH:$HOME/.local/bin"
-
-            # Check if PM2 is installed
             if ! command -v pm2 &> /dev/null; then
               sudo npm install -g pm2
             fi
 
-            # Check if the application is running and manage it with PM2
-            if ! pm2 describe tc-editor-backend > /dev/null; then
-              # Start the application
-              pm2 start backend/app.py --name tc-editor-backend --interpreter ../venv/bin/python
-            else
-              # Restart the application
-              pm2 restart tc-editor-backend
-            fi
+            # Restart the application using PM2 and the ecosystem file
+            pm2 startOrReload ecosystem.config.js
           EOF
 
