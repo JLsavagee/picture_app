@@ -20,11 +20,11 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > /tmp/key.pem
           chmod 600 /tmp/key.pem
 
-      # Step 3: Add the EC2 host key to known_hosts
+      # Step 3: Add EC2 Host Key to known_hosts
       - name: Add EC2 Host Key to known_hosts
         run: |
           mkdir -p ~/.ssh
-          echo "YOUR_EC2_HOST_KEY_HERE" >> ~/.ssh/known_hosts  # Replace with your actual host key
+          ssh-keyscan -H 13.60.237.14 >> ~/.ssh/known_hosts
 
       # Step 4: Copy Backend and requirements.txt to EC2
       - name: Copy Backend to EC2
