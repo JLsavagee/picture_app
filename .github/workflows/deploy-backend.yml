@@ -3,7 +3,7 @@ name: Deploy Backend to AWS EC2
 on:
   push:
     branches:
-      - main  # This will trigger on pushes to the 'main' branch
+      - main  # Triggers on pushes to the 'main' branch
 
 jobs:
   deploy:
@@ -14,31 +14,48 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      # Step 2: Install backend dependencies (locally before deploying)
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt  # Installing Python dependencies
-
-      # Step 3: Set up SSH key (Decode the base64 key and set the right permissions)
-      - name: Setup SSH key
+      # Step 2: Set up SSH key (Decode the base64 key and set the right permissions)
+      - name: Setup SSH Key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > /tmp/key.pem
           chmod 600 /tmp/key.pem
 
- # Step 4: Add the EC2 host key to known_hosts
+      # Step 3: Add the EC2 host key to known_hosts
       - name: Add EC2 Host Key to known_hosts
         run: |
           mkdir -p ~/.ssh
-          echo "|1|UY4Jmm7DK0ZfmfdVBLwhnxhuVLQ=|sKpvIAGOs7Brs8fboogE5PcrkNQ= ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPqigGMbfDaoKBf/0tPpKUgtWqxy2B26kEm/e6BRI4Cd" >> ~/.ssh/known_hosts
-          echo "|1|jSbq/nLfnviazSo5DUNOVrou3Uc=|sByzZgVMa0V6XJvuQKt+UKwyz94= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDAg3XKX+7tv9iD6Kj5Y26uss5Ru3diLWlthj8hh1i+hnV2AX46JE79z1IF6Ktv+GeXu3SPbsfxPf4/CARgKlYPDs3HNXX48pGs7YKqPCMXPWFwzBCMiv3ByTDBgT5Ukvlh9gGOXweuVHBxLdZGcNdw7bKKOkglFVfJY/ysjgZZWiITh1dSUPF57C9LbYp8YXiMYVzSGDBrAvAZsvCuQlXsruFpWbPKrKfaDEBzbIZ9qGxD+aMn0y9lhs5cCGfMYjf7CcNc52YmEhGA0EU3UPQDBfMHIfDDDNm2wMK8d+TAAv49OS/9rGaydpC1Q2XY5INuC05MD+uEeAgg8o9KFpSuAO2DR1GizyD4XelEwUmFhBB1LERwUENmslTC33yRcT4hZo+7nfgOC5+K+yEYC3VZeHvJqmkVIqVTg1K9wDSV0RzXOlB48XVo4Br8JzLkbtHixOYnprOGSW4LUSxhzzztLB0ut0f8QjE6BiyH9wpAwfEYcsFInWq3VHkPF3jYaZs=" >> ~/.ssh/known_hosts
-          echo "|1|xgknrH881ic9wxgsqwlD6+ymaoE=|oGNH4QVcO2KkwPd3c4uo48ZpJOk= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBJ+wfAKSYuvIE5CV+cS2ptbSE+I/f3GXvpJmK3i8M914d6UBegndBlPwNmON7LLMZhLAK9EFev3uLSeCOkij+fI=" >> ~/.ssh/known_hosts
+          echo "YOUR_EC2_HOST_KEY_HERE" >> ~/.ssh/known_hosts  # Replace with your actual host key
 
-      # Step 4: SSH into EC2 and pull the latest code
+      # Step 4: Copy Backend and requirements.txt to EC2
+      - name: Copy Backend to EC2
+        run: |
+          scp -i /tmp/key.pem -r ./backend ubuntu@13.60.237.14:/home/ubuntu/TC-Editor-Backend/
+          scp -i /tmp/key.pem ./requirements.txt ubuntu@13.60.237.14:/home/ubuntu/TC-Editor-Backend/
+
+      # Step 5: SSH into EC2, set up environment, and restart the service
       - name: Deploy to AWS EC2
         run: |
-          ssh -i /tmp/key.pem ubuntu@13.60.237.14 <<EOF
-            cd ~/TC-Editor-Backend  # Make sure this path is correct on your EC2 instance
-            git pull origin main  # Pull the latest code
-            pip install -r requirements.txt  # Install Python dependencies
-            pm2 restart all  # Restart the backend service
+          ssh -i /tmp/key.pem ubuntu@13.60.237.14 << 'EOF'
+            # Navigate to the TC-Editor-Backend directory
+            cd ~/TC-Editor-Backend
+
+            # Ensure virtual environment exists outside the backend directory
+            if [ ! -d "../venv" ]; then
+              python3 -m venv ../venv
+            fi
+
+            # Activate the virtual environment
+            source ../venv/bin/activate
+
+            # Install Python dependencies
+            pip install -r requirements.txt
+
+            # Ensure PM2 is installed and in PATH
+            export PATH="$PATH:$HOME/.local/bin"
+            if ! command -v pm2 &> /dev/null; then
+              npm install -g pm2
+            fi
+
+            # Restart the backend service
+            pm2 restart all
           EOF
