@@ -39,22 +39,11 @@ jobs:
             # Navigate to the TC-Editor-Backend directory
             cd ~/TC-Editor-Backend
 
-            # Ensure virtual environment exists outside the backend directory
-            if [ ! -d "../venv" ]; then
-              python3 -m venv ../venv
-            fi
-
             # Activate the virtual environment
             source ../venv/bin/activate
 
             # Install Python dependencies
             pip install -r requirements.txt
-
-            # Ensure PM2 is installed and in PATH
-            export PATH="$PATH:$HOME/.local/bin"
-            if ! command -v pm2 &> /dev/null; then
-              npm install -g pm2
-            fi
 
             # Restart the backend service
             pm2 restart all
