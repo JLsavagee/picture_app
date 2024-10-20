@@ -20,7 +20,7 @@ FLASK_APP_PORT = os.getenv("FLASK_APP_PORT")
 CORS_ORIGINS = os.getenv("CORS_ORIGINS")
 
 # Print to confirm environment
-print(f"Running in {FLASK_ENV} mode with API URL {API_URL}")
+print(f"Running in {FLASK_ENV} mode with API URL {API_URL} and CORS {CORS_ORIGINS} ")
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": CORS_ORIGINS}})
