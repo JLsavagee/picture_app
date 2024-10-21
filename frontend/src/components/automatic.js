@@ -7,9 +7,15 @@ const Automatic = () => {
     const [backgroundPreview, setBackgroundPreview] = useState(null);
     const [nameListData, setNameListData] = useState([]);
     const [processing, setProcessing] = useState(false);
+    const [folderId, setFolderId] = useState("10TZJod3vKArx0XBPf6XLIcultMxtj-87");
+
+    const handleFolderidChange = (e) => {
+        setFolderId(e.target.value); 
+    };
 
     const API_URL = process.env.REACT_APP_API_URL;
 
+    
     const handleBackgroundChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -118,7 +124,7 @@ const Automatic = () => {
                 <form id="automatic-upload-form" onSubmit={handleSubmit} encType="multipart/form-data">
                     <div className="folderId-field">
                         <p>Folder-ID</p>
-                        <input type="text" name="folder-id" placeholder="insert folder-id" value="10TZJod3vKArx0XBPf6XLIcultMxtj-87" />
+                        <input type="text" name="folder-id" placeholder="insert folder-id" value={folderId} onChange={handleFolderidChange} />
                     </div>
                     <div className="auto-background-upload">
                         <p>Background Upload</p>
