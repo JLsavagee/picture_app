@@ -25,8 +25,6 @@ def read_name_list(name_list_file_path):
         df = pd.read_excel(name_list_file_path, header=0, dtype=(str))
     else:
         raise ValueError('Unsupported file type for name list.')
-
-    # Assuming names are in columns: name, surname, position, trikotnummer
     names_list = df.values.tolist()
     return names_list
 
@@ -113,11 +111,11 @@ def upload_automatic():
             name_list_filename = secure_filename(name_list_file.filename)
             name_list_file_path = os.path.join(UPLOAD_FOLDER, name_list_filename)
             name_list_file.save(name_list_file_path)
-
-            # Download images from Google Drive
-            images = download_images_in_memory(folder_id)
             # Read names from the uploaded name list
             names_list = read_name_list(name_list_file_path)
+            
+            # Download images from Google Drive
+            images = download_images_in_memory(folder_id)
 
             # Check if counts match
             if len(images) != len(names_list):
@@ -126,8 +124,12 @@ def upload_automatic():
 
             # Process each image
             for image_data, name_data in zip(images, names_list):
-                # Unpack name data
-                name, surname, position, trikotnummer = name_data
+                # Unpack name data, assigning default value if trikotnummer is missing
+                if len(name_data) == 3:
+                    name, surname, position = name_data
+                    trikotnummer = ''  # Default value if missing
+                else:
+                    name, surname, position, trikotnummer = name_data
 
                 # Extract the actual content (which should be in bytes) from the dictionary
                 result = process_image(

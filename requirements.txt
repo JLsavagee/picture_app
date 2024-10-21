@@ -1,5 +1,6 @@
 attrs==23.2.0
 awscli==1.35.0
+awsebcli==3.21.0
 blessed==1.20.0
 blinker==1.8.2
 botocore==1.35.34
@@ -11,6 +12,7 @@ click==8.1.7
 colorama==0.4.6
 coloredlogs==15.0.1
 docutils==0.16
+et-xmlfile==1.1.0
 Flask==3.0.3
 Flask-Cors==4.0.1
 flatbuffers==24.3.25
@@ -20,6 +22,7 @@ google-auth==2.35.0
 google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.1
 googleapis-common-protos==1.65.0
+gunicorn==23.0.0
 httplib2==0.22.0
 humanfriendly==10.0
 idna==3.7
@@ -41,6 +44,7 @@ numpy==1.24.4
 oauthlib==3.2.2
 onnxruntime==1.16.3
 opencv-python-headless==4.9.0.80
+openpyxl==3.1.5
 packaging==24.0
 pandas==2.2.3
 pathspec==0.10.1
@@ -81,4 +85,3 @@ urllib3==2.2.1
 wcwidth==0.2.13
 Werkzeug==3.0.3
 zipp==3.18.1
-gunicorn==23.0.0
